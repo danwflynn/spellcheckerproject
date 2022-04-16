@@ -1,4 +1,1 @@
-# Daniel Flynn Python Spell Checker
-
-class SpellCheck:
-    
+# Daniel Flynn Python Spell Checker driver code
