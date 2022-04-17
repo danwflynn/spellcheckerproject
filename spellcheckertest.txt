@@ -1,5 +1,5 @@
-Hello, my name is Daniel Flynn. This is a odcumnet maent to test my sprll checker project. There were no other collaborators,
+Hello, my name is Daniel Flynn. This is a documetn menat to test my sprll checker project. There were no other collaborators,
 this was solely developed by Daniel Flynn. It seems that there were a lot of other people who did a spell checkeras well, so
-I hope that my project isn't too similar to everyone else's. The purpose of this document is too test different cases of mispelled words,
-and to make sure that the program can handle diferent kinds of punctuation! Isn't that such a great idea? Thhere are a total of 6 spelling
+I hope that my project isn't too similar to everyone else's. The purpose of this document is too test diffferent cases of mispelled words,
+and to make sure that the program can handle diferent kinds of punctuation! Isn't that such a great idea? Thhere are a total of 8 spelling
 errors in this document that need corrections.
