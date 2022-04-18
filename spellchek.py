@@ -7,16 +7,25 @@ import math
 
 
 def valid_word(w):
+    """
+    Checks to see if a given string with no whitespace is a valid english word
+    :param w: string
+    :return: boolean
+    """
     return w in words.words() \
-           or w[0:len(w)-2] + w[len(w)-2:len(w)-1].strip("ed") in words.words() \
-           or w[0:len(w)-1] + w[len(w)-1].strip("s") in words.words() \
-           or w[0:len(w)-2] + w[len(w)-2:len(w)-1].strip("'s") in words.words() \
-           or w[0:len(w)-2] + w[len(w)-2:len(w)-1].strip("s'") in words.words() \
-           or w[0:len(w)-3] + w[len(w)-3:len(w)-1].strip("n't") in words.words()
+        or w[0:len(w)-2] + w[len(w)-2:len(w)-1].strip("ed") in words.words() \
+        or w[0:len(w)-1] + w[len(w)-1].strip("s") in words.words() \
+        or w[0:len(w)-2] + w[len(w)-2:len(w)-1].strip("'s") in words.words() \
+        or w[0:len(w)-2] + w[len(w)-2:len(w)-1].strip("s'") in words.words() \
+        or w[0:len(w)-3] + w[len(w)-3:len(w)-1].strip("n't") in words.words()
 
 
 class SpellChek:
     def __init__(self, file):
+        """
+        Initializes spell check object
+        :param file: Filename as a string
+        """
         self.file = file
         self.text = open(file, "r", encoding='utf-8')
         self.suggestions = {}
@@ -111,11 +120,20 @@ class SpellChek:
                                     self.suggestions[word].append("".join(z))
 
     def print_doc(self):
+        """
+        Method to print the text document that the object contains
+        :return:
+        """
         with open(self.file, encoding='utf8') as f:
             for line in f:
                 print(line, end='')
 
     def ignore_all(self, word):
+        """
+        Removes word from suggestions
+        :param word: String
+        :return:
+        """
         word = word.lower()
         if word in self.suggestions.keys():
             self.suggestions.pop(word)
@@ -123,6 +141,11 @@ class SpellChek:
             print("Not found in suggestions")
 
     def refresh_suggestions(self, word):
+        """
+        Gives new random valid suggestions for a given word
+        :param word: String
+        :return:
+        """
         if word in self.suggestions.keys() and len(word) > 3:
             fixes = []
             r = random.randint(5, math.factorial(len(word)) - 5)
@@ -165,6 +188,10 @@ class SpellChek:
             print("Word must be present in document and have over 3 characters")
 
     def get_corrections_from_user(self):
+        """
+        Allows user to choose corrections from suggestions dictionary
+        :return:
+        """
         print("Enter 0 when done")
         while True:
             if self.corrections.keys() == self.suggestions.keys():
@@ -184,6 +211,10 @@ class SpellChek:
                 print("Not in suggestions dictionary")
 
     def make_corrections(self):
+        """
+        Applies corrections given by the user to the file itself
+        :return:
+        """
         c = []
         with open(self.file, encoding='utf8') as f:
             for line in f:
@@ -202,6 +233,10 @@ class SpellChek:
                 f.write(line)
 
     def __str__(self):
+        """
+        Method for printing object data
+        :return: String
+        """
         return f'Suggestions:\n' \
                f'{json.dumps(self.suggestions, indent=len(self.suggestions))}\n' \
                f'Corrections:\n' \
