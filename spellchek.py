@@ -56,6 +56,7 @@ class SpellChek:
                 word = word.strip("7")
                 word = word.strip("8")
                 word = word.strip("9")
+                word = word.strip("$")
                 if 0 < len(word) < 3 and not valid_word(word):
                     fixes = []
                     for x in [''.join(p) for p in list(itertools.permutations(list(word)))]:
@@ -224,6 +225,22 @@ class SpellChek:
                         o.append(self.corrections[word])
                     elif word.lower() in self.corrections.keys():
                         o.append(self.corrections[word.lower()].capitalize())
+                    elif word.strip(".") in self.corrections.keys():
+                        o.append(self.corrections[word.strip(".")] + ".")
+                    elif word.strip(".").lower() in self.corrections.keys():
+                        o.append(self.corrections[word.strip(".").lower()].capitalize() + ".")
+                    elif word.strip(",") in self.corrections.keys():
+                        o.append(self.corrections[word.strip(",")] + ",")
+                    elif word.strip(",").lower() in self.corrections.keys():
+                        o.append(self.corrections[word.strip(",").lower()].capitalize() + ",")
+                    elif word.strip("!") in self.corrections.keys():
+                        o.append(self.corrections[word.strip("!")] + "!")
+                    elif word.strip("!").lower() in self.corrections.keys():
+                        o.append(self.corrections[word.strip("!").lower()].capitalize() + "!")
+                    elif word.strip("?") in self.corrections.keys():
+                        o.append(self.corrections[word.strip("?")] + "?")
+                    elif word.strip("?").lower() in self.corrections.keys():
+                        o.append(self.corrections[word.strip("?").lower()].capitalize() + "?")
                     else:
                         o.append(word)
                 c.append(" ".join(o))
