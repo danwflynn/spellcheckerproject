@@ -1,9 +1,17 @@
 # Daniel Flynn Python Spell Checker main
 from spellchek import SpellChek
+import sys
+import time
 
 menu = True
+a = 0
+for x in range(0, 5):
+    a = a + 1
+    b = ("Loading" + "." * a)
+    sys.stdout.write('\r'+b)
+    time.sleep(0.5)
 sct = SpellChek("spellcheckertest.txt")
-
+sys.stdout.write('\r')
 print("Menu:\n"
       "1. Ignore a word\n"
       "2. Print suggestions and corrections\n"

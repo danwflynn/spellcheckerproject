@@ -1,23 +1,8 @@
 # Daniel Flynn spell check class
-from nltk.corpus import words
-import itertools
+from suggester import Suggester
 import json
 import random
 import math
-
-
-def valid_word(w):
-    """
-    Checks to see if a given string with no whitespace is a valid english word
-    :param w: string
-    :return: boolean
-    """
-    return w in words.words() \
-        or w[0:len(w)-2] + w[len(w)-2:len(w)-1].strip("ed") in words.words() \
-        or w[0:len(w)-1] + w[len(w)-1].strip("s") in words.words() \
-        or w[0:len(w)-2] + w[len(w)-2:len(w)-1].strip("'s") in words.words() \
-        or w[0:len(w)-2] + w[len(w)-2:len(w)-1].strip("s'") in words.words() \
-        or w[0:len(w)-3] + w[len(w)-3:len(w)-1].strip("n't") in words.words()
 
 
 class SpellChek:
@@ -57,68 +42,28 @@ class SpellChek:
                 word = word.strip("8")
                 word = word.strip("9")
                 word = word.strip("$")
-                if 0 < len(word) < 3 and not valid_word(word):
-                    fixes = []
-                    for x in [''.join(p) for p in list(itertools.permutations(list(word)))]:
-                        if len(x) > 0 and valid_word(x):
-                            fixes.append(x)
-                    self.suggestions[word] = fixes
-                    if len(self.suggestions[word]) < 5:
-                        for i in range(len(word)):
-                            z = list(word)
-                            z.insert(i+1, " ")
-                            y = "".join(z).split()
-                            if len(self.suggestions[word]) < 5 and len(z) > 0 and valid_word(y[0])\
-                                    and valid_word(y[1]) and " ".join(y) not in self.suggestions[word]:
-                                self.suggestions[word].append(" ".join(y))
-                    if len(self.suggestions[word]) == 0:
-                        vowels = ['a', 'e', 'i', 'o', 'u']
-                        for i in range(len(word)):
-                            for a in vowels:
-                                z = list(word)
-                                z[i] = a
-                                if len(self.suggestions[word]) < 5 and len(z) > 0 and valid_word("".join(z)) \
-                                        and "".join(z) not in self.suggestions[word]:
-                                    self.suggestions[word].append("".join(z))
-                elif len(word) > 0 and not valid_word(word):
-                    fixes = []
-                    for x in [''.join(p) for p in list(itertools.permutations(list(word)))][1:5]:
-                        if len(x) > 0 and valid_word(x):
-                            fixes.append(x)
-                    self.suggestions[word] = fixes
-                    if len(self.suggestions[word]) < 5:
-                        for i in range(len(word)):
-                            z = list(word)
-                            z.pop(i)
-                            if len(self.suggestions[word]) < 5 and len(z) > 0 and valid_word("".join(z)) and "".join(z)\
-                                    not in self.suggestions[word]:
-                                self.suggestions[word].append("".join(z))
-                                break
-                    if len(self.suggestions[word]) < 5:
-                        for i in range(len(word)):
-                            z = list(word)
-                            z.insert(i+1, z[i])
-                            if len(self.suggestions[word]) < 5 and len(z) > 0 and valid_word("".join(z)) and "".join(z)\
-                                    not in self.suggestions[word]:
-                                self.suggestions[word].append("".join(z))
-                                break
-                    if len(self.suggestions[word]) < 5 and len(word) > 8:
-                        for i in range(len(word)):
-                            z = list(word)
-                            z.insert(i+1, " ")
-                            y = "".join(z).split()
-                            if len(self.suggestions[word]) < 5 and len(z) > 0 and valid_word(y[0])\
-                                    and valid_word(y[1]) and " ".join(y) not in self.suggestions[word]:
-                                self.suggestions[word].append(" ".join(y))
-                    if len(self.suggestions[word]) == 0:
-                        vowels = ['a', 'e', 'i', 'o', 'u']
-                        for i in range(len(word)):
-                            for a in vowels:
-                                z = list(word)
-                                z[i] = a
-                                if len(self.suggestions[word]) < 5 and len(z) > 0 and valid_word("".join(z)) \
-                                        and "".join(z) not in self.suggestions[word]:
-                                    self.suggestions[word].append("".join(z))
+                if 0 < len(word) < 3 and not Suggester.valid_word(word):
+                    typo = Suggester(word)
+                    typo.get_permutations(1, 2)
+                    if len(word) == 2 and len(typo.options) < 5:
+                        typo.remove_extra_letters()
+                    if len(typo.options) < 5:
+                        typo.add_extra_letters()
+                    if len(typo.options) < 5:
+                        typo.add_spaces()
+                    self.suggestions[word] = typo.options
+                elif len(word) > 0 and not Suggester.valid_word(word):
+                    typo = Suggester(word)
+                    typo.get_permutations(1, 3)
+                    if len(typo.options) < 3:
+                        typo.remove_extra_letters()
+                    if len(typo.options) < 3:
+                        typo.add_extra_letters()
+                    if len(typo.options) < 3:
+                        typo.add_spaces()
+                    if len(typo.options) == 0:
+                        typo.add_vowels()
+                    self.suggestions[word] = typo.options
 
     def print_doc(self):
         """
@@ -148,43 +93,14 @@ class SpellChek:
         :return:
         """
         if word in self.suggestions.keys() and len(word) > 3:
-            fixes = []
+            typo = Suggester(word)
             r = random.randint(5, math.factorial(len(word)) - 5)
-            for x in [''.join(p) for p in list(itertools.permutations(list(word)))][r:r+5]:
-                if len(x) > 0 and valid_word(x):
-                    fixes.append(x)
-            self.suggestions[word] = fixes
-            if len(self.suggestions[word]) < 5:
-                for i in range(len(word)):
-                    z = list(word)
-                    z.pop(i)
-                    if len(self.suggestions[word]) < 5 and len(z) > 0 and valid_word("".join(z))\
-                            and "".join(z) not in self.suggestions[word]:
-                        self.suggestions[word].append("".join(z))
-            if len(self.suggestions[word]) < 5:
-                for i in range(len(word)):
-                    z = list(word)
-                    z.insert(i + 1, z[i])
-                    if len(self.suggestions[word]) < 5 and len(z) > 0 and valid_word("".join(z))\
-                            and "".join(z) not in self.suggestions[word]:
-                        self.suggestions[word].append("".join(z))
-            if len(self.suggestions[word]) < 5 and len(word) > 8:
-                for i in range(len(word)):
-                    z = list(word)
-                    z.insert(i + 1, " ")
-                    y = "".join(z).split()
-                    if len(self.suggestions[word]) < 5 and len(z) > 0 and valid_word(y[0]) and valid_word(y[1]) \
-                            and " ".join(y) not in self.suggestions[word]:
-                        self.suggestions[word].append(" ".join(y))
-            if len(self.suggestions[word]) < 5:
-                vowels = ['a', 'e', 'i', 'o', 'u']
-                for i in range(len(word)):
-                    for a in vowels:
-                        z = list(word)
-                        z[i] = a
-                        if len(self.suggestions[word]) < 5 and len(z) > 0 and valid_word("".join(z)) \
-                                and "".join(z) not in self.suggestions[word]:
-                            self.suggestions[word].append("".join(z))
+            typo.get_permutations(r, r+5)
+            typo.remove_extra_letters()
+            typo.add_extra_letters()
+            typo.add_spaces()
+            typo.add_vowels()
+            self.suggestions[word] = typo.options
         else:
             print("Word must be present in document and have over 3 characters")
 
