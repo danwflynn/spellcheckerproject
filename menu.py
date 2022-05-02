@@ -2,6 +2,8 @@ from spellchek import SpellChek
 import sys
 import time
 
+# collection of static methods to organize parts of the menu for user interaction
+
 
 class Menu:
     @staticmethod

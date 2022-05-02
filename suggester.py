@@ -1,6 +1,8 @@
 from nltk.corpus import words
 import itertools
 
+# class used to find suggestions for misspelled words
+
 
 class Suggester:
     def __init__(self, word):

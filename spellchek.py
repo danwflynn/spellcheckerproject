@@ -4,6 +4,8 @@ import json
 import random
 import math
 
+# primary class meant for handling collections of suggestions and corrections as well as making edits
+
 
 class SpellChek:
     def __init__(self, file):

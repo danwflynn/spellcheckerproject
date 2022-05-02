@@ -2,8 +2,9 @@
 from spellchek import SpellChek
 from menu import Menu
 
+filename = input("Filename: ")
 Menu.loading_screen()
-sct = SpellChek("spellcheckertest.txt")
+sct = SpellChek(filename)
 Menu.display_menu()
 Menu.implement_choices(sct)
 
