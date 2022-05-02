@@ -1,4 +1,3 @@
-from spellchek import SpellChek
 import sys
 import time
 
